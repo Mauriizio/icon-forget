@@ -1,25 +1,23 @@
-// /app/page.jsx
+// /src/app/page.jsx
 import Link from "next/link";
+import Image from "next/image"; // <-- NUEVO
 
 export default function HomePage() {
   return (
     <main className="min-h-dvh">
-      {/* HERO */}
       <section className="container-if pt-16 pb-10">
         <div className="grid items-start gap-10 md:grid-cols-2 md:gap-12">
-          {/* Columna izquierda: copy + CTA */}
           <div className="min-w-0">
-            {/* Fila: icono + título */}
             <div className="flex items-center gap-4">
-              <img
+              <Image
                 src="/logo-if.svg"
                 alt="IconForge logo"
+                width={48}
+                height={48}
                 className="h-12 w-12 shrink-0 rounded-xl shadow-sm ring-1 ring-slate-200"
-                loading="eager"
-                width="48"
-                height="48"
+                priority
               />
-              <h1 className="font-display text-5xl font-extrabold tracking-tight h1-gradient p-2">
+              <h1 className="font-display text-5xl font-extrabold tracking-tight h1-gradient">
                 IconForge
               </h1>
             </div>
@@ -65,21 +63,19 @@ export default function HomePage() {
           {/* Columna derecha: ilustración con el SVG grande */}
           <div className="min-w-0">
             <div className="hero-figure animate-[ifGlow_8s_ease-in-out_infinite] w-full max-w-[520px] rounded-3xl border border-slate-200/60 p-6 shadow-md md:ml-auto">
-              {/* Top bar */}
               <div className="flex items-center justify-between pb-3">
                 <div className="text-sm font-semibold text-slate-700">Vista del icono</div>
                 <span className="badge">SVG</span>
               </div>
 
-              {/* Lienzo del logo */}
               <div className="flex items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white/70 p-6">
-                <img
+                <Image
                   src="/logo-if.svg"
                   alt="Logo en tamaño grande"
-                  className="w-[300px] max-w-full drop-shadow-sm animate-[floatY_6s_ease-in-out_infinite]"
-                  decoding="async"
-                  width="300"
-                  height="300"
+                  width={300}
+                  height={300}
+                  className="block w-[300px] max-w-full shrink-0 drop-shadow-sm animate-[floatY_6s_ease-in-out_infinite]"
+                  priority
                 />
               </div>
 

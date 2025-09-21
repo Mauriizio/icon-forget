@@ -17,6 +17,9 @@
 
 /* Tipografía/antialias general */
 html { color-scheme: light; }
+html, body { overflow-x: hidden; } /* evita scroll lateral */
+* { min-width: 0; }                /* guardrail en flex/grid */
+
 body {
   @apply text-slate-800;
   -webkit-font-smoothing: antialiased;
@@ -34,6 +37,21 @@ body {
 ::selection {
   background-color: rgba(var(--if-primary) / 0.25);
   color: rgb(var(--if-ink));
+}
+
+/* Contenedor máximo para coherencia de ancho */
+.container-if {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+/* Hero título: tracking y weight agradable */
+.h1-gradient {
+  background-image: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* Tarjetas y botones “default” */
@@ -55,19 +73,6 @@ body {
   @apply inline-flex items-center rounded-full bg-white px-3 py-1 text-xs ring-1 ring-slate-200;
 }
 
-/* Contenedor máximo para coherencia de ancho */
-.container-if {
-  @apply mx-auto max-w-6xl px-4;
-}
-
-/* Hero título: tracking y weight agradable */
-.h1-gradient {
-  background-image: linear-gradient(90deg, rgb(var(--if-primary)) 0%, rgb(var(--if-accent)) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
 /* Panel ilustración del logo grande (glow suave) */
 .hero-figure {
   --g1: rgba(99,102,241,0.15);
@@ -78,7 +83,6 @@ body {
     white;
   @apply rounded-3xl border border-slate-200 shadow-lg;
 }
-
 
 /* === IconForge keyframes (server-friendly) === */
 @keyframes ifGlow {
@@ -104,64 +108,7 @@ body {
   100% { transform: translateY(0); }
 }
 
-/* ----- Tipografía de display para titulares ----- */
+/* Tipografía display (aplicada en títulos con className="font-display") */
 .font-display {
   font-family: "Space Grotesk", Plus Jakarta Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-}
-
-/* ----- Contenedor consistente (si tu .container-if ya existe, combina) ----- */
-.container-if {
-  max-width: 1120px;
-  margin-inline: auto;
-  padding-inline: 1rem;
-}
-
-/* Evita scroll lateral en mobile por sombras/animaciones o pill desbordado */
-html, body {
-  overflow-x: hidden;
-}
-
-/* Guardrail para layouts flex/grid: evita que el contenido “empuje” el ancho */
-* {
-  min-width: 0;
-}
-
-/* === Animaciones usadas en Home === */
-@keyframes ifGlow {
-  0% { box-shadow: 0 10px 30px rgba(99,102,241,.08), 0 2px 0 rgba(99,102,241,.06) inset; transform: scale(1); }
-  50%{ box-shadow: 0 18px 42px rgba(167,139,250,.14), 0 2px 0 rgba(167,139,250,.08) inset; transform: scale(1.01); }
-  100%{ box-shadow: 0 10px 30px rgba(99,102,241,.08), 0 2px 0 rgba(99,102,241,.06) inset; transform: scale(1); }
-}
-@keyframes floatY {
-  0%{ transform: translateY(0); }
-  50%{ transform: translateY(-8px); }
-  100%{ transform: translateY(0); }
-}
-
-/* Si quieres reforzar el gradiente del título, asegúrate de tener esta util */
-.h1-gradient {
-  background-image: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Tarjeta genérica para secciones (“card”) */
-.card {
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.04);
-}
-
-/* Chips / badges reutilizables */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 9999px;
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #4338ca;
-  background: #eef2ff;
 }

@@ -1,30 +1,9 @@
 {
-  "name": "iconforge",
-  "version": "0.1.0",
+  "name": "icon-forget-root",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "canvg": "^4.0.3",
-    "client-zip": "^2.5.0",
-    "framer-motion": "^12.23.6",
-    "lucide-react": "^0.525.0",
-    "next": "15.3.5",
-    "pica": "^9.0.1",
-    "react": "19.0.0",
-    "react-dom": "19.0.0"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "autoprefixer": "10.4.21",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.2",
-    "tailwindcss": "3.4.1"
+    "dev": "npm --prefix ./iconforge run dev",
+    "build": "npm --prefix ./iconforge run build",
+    "start": "npm --prefix ./iconforge run start"
   }
-
-  
 }
