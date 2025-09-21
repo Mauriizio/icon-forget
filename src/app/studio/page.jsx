@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { drawToCanvas, blobFromCanvas, downloadBlob, drawOG } from "@/lib/canvas-utils";
 import { rasterizeSvgToImage } from "@/lib/svg-to-canvas";
 import { pngsToIco } from "@/lib/ico-client";
 import { zipAndDownload } from "@/lib/zip-utils";
+import { validateFile, MAX_BYTES } from "@/lib/upload-validate";
+import { useAsyncTask } from "@/lib/use-async-task";
 
 const SIZES = [
   { label: "icon-512", size: 512, padding: 0.06 },
@@ -16,12 +19,23 @@ const SIZES = [
   { label: "favicon-16", size: 16,  padding: 0.08 },
 ];
 
+function Spinner({ className = "" }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent align-[-2px] ${className}`}
+    />
+  );
+}
+
 export default function StudioPage() {
   const [file, setFile] = useState(null);
   const [img, setImg] = useState(null);
   const [bg, setBg] = useState("transparent");
   const [maskable, setMaskable] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [uiError, setUiError] = useState(null);
+  const [zipDoneAt, setZipDoneAt] = useState(null);
 
   // OG state
   const [ogTitle, setOgTitle] = useState("IconForge");
@@ -36,7 +50,19 @@ export default function StudioPage() {
   const onPick = async (e) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    setBusy(true); setFile(f);
+
+    setUiError(null);
+    const res = validateFile(f);
+    if (!res.ok) {
+      setFile(null);
+      setImg(null);
+      setUiError(res.error);
+      console.warn("[upload] invalid file:", { name: f?.name, size: f?.size, type: f?.type });
+      return;
+    }
+
+    setBusy(true);
+    setFile(f);
     try {
       if (/svg/.test(f.type) || f.name.toLowerCase().endsWith(".svg")) {
         const text = await f.text();
@@ -46,7 +72,14 @@ export default function StudioPage() {
         const dataUrl = await fileToDataURL(f);
         setImg(await dataUrlToImage(dataUrl));
       }
-    } finally { setBusy(false); }
+    } catch (err) {
+      console.error("[upload] load error", err);
+      setUiError("No se pudo cargar el logo. Intenta con otro archivo.");
+      setFile(null);
+      setImg(null);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const tiles = useMemo(() => {
@@ -145,31 +178,121 @@ export default function StudioPage() {
     await zipAndDownload(files, "iconforge-assets.zip");
   };
 
+  // ——— Preset ZIP con aviso de finalización ———
+  const downloadZIPPreset = async () => {
+    await downloadZIP();
+    setZipDoneAt(Date.now());
+  };
+
+  // Tareas envueltas
+  const { run: runOG,   running: ogRunning,  error: ogError }   = useAsyncTask(downloadOG);
+  const { run: runICO,  running: icoRunning, error: icoError }  = useAsyncTask(downloadICO);
+  const { run: runZIP,  running: zipRunning, error: zipError }  = useAsyncTask(downloadZIPPreset);
+
+  const sizeLimitMB = (MAX_BYTES / (1024 * 1024)).toFixed(0);
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold tracking-tight">IconForge Studio</h1>
-      <p className="text-slate-600">Sube tu logo y descarga todos los assets listos (PNG, ICO, OG, manifest y ZIP).</p>
+      {/* NAV sticky con regreso al Home */}
+      <nav className="sticky top-0 z-40 -mx-4 mb-6 border-b bg-white/70 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-4 h-12 flex items-center justify-between">
+          <Link href="/" className="text-sm text-slate-700 hover:text-indigo-600">← Inicio</Link>
+          <img src="/logo-if.svg" alt="IconForge" className="h-6 w-6" />
+        </div>
+      </nav>
 
+      {/* === HEADER STUDIO (ADD) === */}
+      <header className="flex flex-col items-center text-center gap-4 mb-8">
+        <img src="/logo-if.svg" alt="IconForge" width="72" height="72" />
+        <h1 className="font-display text-3xl">IconForge Studio</h1>
+        <p className="max-w-2xl text-slate-600">
+          Sube tu logo y descarga todos los assets listos (PNG, ICO, OG, manifest y ZIP).
+        </p>
+      </header>
+
+      <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+        <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent">
+          IconForge Studio
+        </span>
+      </h1>
+      <p className="text-slate-600">
+        Sube tu logo y descarga todos los assets listos (PNG, ICO, OG, manifest y ZIP).
+      </p>
+
+      {/* INPUT más visible/CTA */}
       <section className="rounded-2xl border bg-white shadow-sm p-4 mt-6">
-        <label className="block text-sm font-medium mb-2">1) Logo (SVG/PNG/JPG)</label>
-        <input type="file" accept="image/*,.svg" onChange={onPick}
-          className="block w-full text-sm file:mr-3 file:py-2 file:px-3 file:rounded-md file:border file:bg-white file:text-slate-700 hover:file:bg-slate-50"/>
-        {file && <p className="mt-2 text-xs text-slate-600">Cargado: <strong>{file.name}</strong>{busy ? " (procesando…)" : ""}</p>}
+        <label className="block text-sm font-medium mb-2">
+          1) Logo (SVG/PNG/JPG) — máx. {sizeLimitMB} MB
+        </label>
+
+        <div className="relative">
+          <input
+            id="filepicker"
+            type="file"
+            accept=".svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg"
+            onChange={onPick}
+            className="sr-only"
+          />
+          <label
+            htmlFor="filepicker"
+            className="flex items-center justify-between gap-3 w-full rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-4 hover:bg-slate-100 cursor-pointer transition"
+          >
+            <div className="text-left">
+              <p className="text-sm font-medium text-slate-800">Seleccionar archivo</p>
+              <p className="text-xs text-slate-500">Arrastra y suelta o haz click para elegir</p>
+            </div>
+            <span className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+              Elegir
+            </span>
+          </label>
+        </div>
+
+        {uiError ? (
+          <p role="alert" className="mt-2 text-xs text-red-600">{uiError}</p>
+        ) : null}
+        {file && (
+          <p className="mt-2 text-xs text-slate-600">
+            Cargado: <strong>{file.name}</strong>{busy ? " (procesando…)" : ""}
+          </p>
+        )}
       </section>
 
       <section className="grid md:grid-cols-4 gap-4 mt-6">
         <div className="rounded-2xl border bg-white shadow-sm p-4 space-y-4">
-          <h3 className="text-sm font-medium">Opciones</h3>
+          {/* PRESET principal */}
+          <button
+            onClick={runZIP}
+            disabled={!img || zipRunning}
+            aria-busy={zipRunning ? "true" : "false"}
+            title="Genera y descarga: icons PNG (16–512), apple-touch-180, OG 1200×630, site.webmanifest y favicon.ico (si el vendor está disponible)."
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 w-full shadow-sm"
+          >
+            {zipRunning ? <Spinner className="border-white" /> : null}
+            {zipRunning ? "Procesando…" : "PWA completo (ZIP)"}
+          </button>
+          {zipDoneAt && !zipRunning && !zipError ? (
+            <p role="status" className="text-xs text-emerald-600">ZIP listo. Revisa tu carpeta de descargas.</p>
+          ) : null}
+
+          <h3 className="text-sm font-semibold text-slate-800">Opciones</h3>
 
           <div className="flex items-center justify-between gap-3">
             <label className="text-sm">Fondo</label>
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setBg("transparent")}
-                className={`px-2.5 py-1 rounded border text-xs ${bg==="transparent"?"bg-slate-800 text-white":"bg-white"}`}>
+              <button
+                type="button"
+                onClick={() => setBg("transparent")}
+                className={`px-2.5 py-1 rounded border text-xs ${bg==="transparent"?"bg-slate-900 text-white":"bg-white"}`}
+              >
                 Transparente
               </button>
-              <input type="color" value={bg==="transparent" ? "#ffffff" : bg}
-                onChange={(e)=>setBg(e.target.value)} className="h-8 w-10 border rounded" title="Color de fondo"/>
+              <input
+                type="color"
+                value={bg==="transparent" ? "#ffffff" : bg}
+                onChange={(e)=>setBg(e.target.value)}
+                className="h-8 w-10 border rounded"
+                title="Color de fondo"
+              />
             </div>
           </div>
 
@@ -178,14 +301,44 @@ export default function StudioPage() {
             <input type="checkbox" checked={maskable} onChange={(e)=>setMaskable(e.target.checked)} />
           </div>
 
-          <h3 className="text-sm font-medium pt-2">Open Graph</h3>
-          <input value={ogTitle} onChange={e=>setOgTitle(e.target.value)} className="w-full border rounded px-3 py-1.5 text-sm" placeholder="Título"/>
-          <input value={ogSubtitle} onChange={e=>setOgSubtitle(e.target.value)} className="w-full border rounded px-3 py-1.5 text-sm mt-2" placeholder="Subtítulo"/>
-          <button onClick={downloadOG} disabled={!img} className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-white hover:bg-slate-50 disabled:opacity-50">
-            Descargar OG (1200×630)
-          </button>
+          <h3 className="text-sm font-semibold text-slate-800 pt-2">Open Graph</h3>
+          <input
+            value={ogTitle}
+            onChange={e=>setOgTitle(e.target.value)}
+            className="w-full border rounded px-3 py-1.5 text-sm"
+            placeholder="Título"
+          />
+          <input
+            value={ogSubtitle}
+            onChange={e=>setOgSubtitle(e.target.value)}
+            className="w-full border rounded px-3 py-1.5 text-sm mt-2"
+            placeholder="Subtítulo"
+          />
 
-          <h3 className="text-sm font-medium pt-2">Manifest</h3>
+          {/* Botón OG con estado */}
+          <button
+            onClick={runOG}
+            disabled={!img || ogRunning}
+            aria-busy={ogRunning ? "true" : "false"}
+            className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-white hover:bg-slate-50 disabled:opacity-50"
+          >
+            {ogRunning ? <Spinner /> : null}
+            {ogRunning ? "Procesando…" : "Descargar OG (1200×630)"}
+          </button>
+          {ogError ? <p role="alert" className="mt-1 text-xs text-red-600">OG: {ogError.message}</p> : null}
+
+          {/* MINI PREVIEW OG responsiva SIN overflow */}
+          <div className="mt-3">
+            <label className="block text-xs text-slate-600 mb-1">Vista previa OG</label>
+            <OGMiniPreview
+              img={img}
+              bg={bg}
+              title={ogTitle}
+              subtitle={ogSubtitle}
+            />
+          </div>
+
+          <h3 className="text-sm font-semibold text-slate-800 pt-4">Manifest</h3>
           <input value={mfName} onChange={e=>setMfName(e.target.value)} className="w-full border rounded px-3 py-1.5 text-sm" placeholder="name"/>
           <input value={mfShort} onChange={e=>setMfShort(e.target.value)} className="w-full border rounded px-3 py-1.5 text-sm mt-2" placeholder="short_name"/>
           <div className="grid grid-cols-2 gap-3 mt-2">
@@ -199,12 +352,28 @@ export default function StudioPage() {
             </div>
           </div>
 
-          <button onClick={downloadICO} disabled={!img} className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-white hover:bg-slate-50 disabled:opacity-50 w-full mt-3">
-            Descargar favicon.ico
+          <button
+            onClick={runICO}
+            disabled={!img || icoRunning}
+            aria-busy={icoRunning ? "true" : "false"}
+            className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-white hover:bg-slate-50 disabled:opacity-50 w-full mt-3"
+          >
+            {icoRunning ? <Spinner /> : null}
+            {icoRunning ? "Procesando…" : "Descargar favicon.ico"}
           </button>
-          <button onClick={downloadZIP} disabled={!img} className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 w-full">
-            Descargar ZIP (todo)
+          {icoError ? <p role="alert" className="mt-1 text-xs text-red-600">ICO: {icoError.message}</p> : null}
+
+          <button
+            onClick={runZIP}
+            disabled={!img || zipRunning}
+            aria-busy={zipRunning ? "true" : "false"}
+            className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-white text-slate-900 hover:bg-slate-50 disabled:opacity-50 w-full"
+          >
+            {zipRunning ? <Spinner /> : null}
+            {zipRunning ? "Procesando…" : "Descargar ZIP (todo)"}
           </button>
+          {zipError ? <p role="alert" className="mt-1 text-xs text-red-600">ZIP: {zipError.message}</p> : null}
+
           {!img && <p className="text-xs text-slate-500">Sube un logo para habilitar.</p>}
         </div>
 
@@ -220,8 +389,12 @@ export default function StudioPage() {
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <span className="text-slate-600">{normalizeFileName(t.label)}</span>
-                    <button onClick={() => downloadPNG(t)}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-slate-50">PNG</button>
+                    <button
+                      onClick={() => downloadPNG(t)}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-slate-50"
+                    >
+                      PNG
+                    </button>
                   </div>
                 </div>
               ))}
@@ -244,6 +417,71 @@ function CanvasPreview({ canvas, viewSize = 128 }) {
     ctx.drawImage(canvas, 0, 0, viewSize, viewSize);
   }, [canvas, viewSize]);
   return <canvas ref={ref} className="block" style={{ width: viewSize, height: viewSize }} />;
+}
+
+/** Mini preview OG responsiva con checkerboard y SIN overflow */
+function OGMiniPreview({ img, bg, title, subtitle }) {
+  const ref = useRef(null);
+  const wrapRef = useRef(null);
+  const isTransparent = bg === "transparent";
+  const ASPECT = 1200 / 630;
+
+  useEffect(() => {
+    const dst = ref.current;
+    const wrap = wrapRef.current;
+    if (!dst || !wrap || !img) return;
+
+    const render = () => {
+      const cssWidth = wrap.clientWidth;               // ancho disponible en la columna
+      const cssHeight = Math.round(cssWidth / ASPECT); // mantener 1200×630
+      const dpr = Math.min(window.devicePixelRatio || 1, 2); // limitar para no gastar GPU
+
+      // Canvas físico (mayor para nitidez en pantallas high-DPI)
+      dst.width = Math.round(cssWidth * dpr);
+      dst.height = Math.round(cssHeight * dpr);
+
+      // Canvas CSS (tamaño visual)
+      dst.style.width = cssWidth + "px";
+      dst.style.height = cssHeight + "px";
+
+      const ctx = dst.getContext("2d");
+      ctx.imageSmoothingQuality = "high";
+      ctx.clearRect(0, 0, dst.width, dst.height);
+
+      const ogBg = isTransparent ? "#ffffff" : bg;
+      const src = drawOG({ img, w: 1200, h: 630, bg: ogBg, title, subtitle });
+
+      // Dibujar escalado a resolución física
+      ctx.drawImage(src, 0, 0, dst.width, dst.height);
+    };
+
+    render();
+
+    // Redibujar al cambiar tamaño del contenedor
+    const ro = new ResizeObserver(render);
+    ro.observe(wrap);
+    return () => ro.disconnect();
+  }, [img, bg, title, subtitle, isTransparent]);
+
+  return (
+    <div className="relative rounded-xl border bg-white p-2 overflow-hidden">
+      <div
+        ref={wrapRef}
+        className={`rounded-lg ${isTransparent ? "bg-[length:16px_16px] bg-[linear-gradient(45deg,rgba(148,163,184,0.18) 25%,transparent 25%),linear-gradient(-45deg,rgba(148,163,184,0.18) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(148,163,184,0.18) 75%),linear-gradient(-45deg,transparent 75%,rgba(148,163,184,0.18) 75%)] bg-[position:0_0,0_8px,8px_-8px,-8px_0]" : "bg-white"}`}
+      >
+        <canvas
+          ref={ref}
+          aria-label="Vista previa Open Graph"
+          className="block w-full rounded-lg"
+        />
+      </div>
+
+      {/* badge dimensiones */}
+      <span className="absolute right-3 top-3 inline-flex items-center rounded-md bg-slate-900/80 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur">
+        1200×630
+      </span>
+    </div>
+  );
 }
 
 function normalizeFileName(label) {
