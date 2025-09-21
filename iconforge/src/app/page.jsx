@@ -5,8 +5,7 @@ export default function HomePage() {
   return (
     <main className="min-h-dvh bg-slate-50">
       {/* HERO */}
-     <section className="mx-auto max-w-5xl lg:max-w-6xl px-4 pt-16 pb-10">
-
+      <section className="mx-auto max-w-5xl lg:max-w-6xl px-4 pt-16 pb-10">
         {/* Contenedor responsivo: columna única en móvil, 2 columnas en desktop si luego añades una preview */}
         <div className="grid gap-8 lg:grid-cols-2 items-center">
           {/* Columna de texto */}
@@ -21,20 +20,18 @@ export default function HomePage() {
               />
 
               <h1 className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-center sm:text-left">
-  <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent">
                   IconForge
                 </span>
               </h1>
 
               {/* Badge: visible en sm+; en móvil puedes activarla quitando 'hidden' */}
-             <span className="inline-flex justify-center text-center rounded-full px-3 py-1 text-sm bg-violet-100 text-violet-700 max-w-[260px]">
-  100% local · Sin backend · Next.js 15 + Tailwind 3
-</span>
-
+              <span className="inline-flex justify-center text-center rounded-full px-3 py-1 text-sm bg-violet-100 text-violet-700 max-w-[260px]">
+                100% local · Sin backend · Next.js 15 + Tailwind 3
+              </span>
             </div>
 
-           <p className="mt-4 text-lg text-slate-700 text-center sm:text-left sm:max-w-xl">
-
+            <p className="mt-4 text-lg text-slate-700 text-center sm:text-left sm:max-w-xl">
               Genera todos tus assets desde un solo logo: PWA (maskable), Apple Touch, favicons PNG/ICO y Open Graph 1200×630.
               Todo se procesa en tu navegador. Sin subidas, sin esperas.
             </p>
@@ -109,29 +106,22 @@ export default function HomePage() {
         <h2 className="text-xl font-semibold text-slate-900">Qué obtienes</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <FeatureCard
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
             title="Assets de marca coherentes"
             desc="Con márgenes seguros y maskable listo para PWA. Exportes nítidos desde 16×16 hasta 512×512."
           />
           <FeatureCard
-
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
             title="OG 1200×630 con tipografía clara"
             desc="Capa de fondo automática si tu logo es transparente. Títulos y subtítulos personalizables."
           />
           <FeatureCard
-
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
             title="Manifest válido"
             desc="Generamos site.webmanifest con purpose 'any maskable' y colores configurables."
           />
           <FeatureCard
-
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
             title="Sin dependencia del servidor"
             desc="Todo sucede en tu navegador con Canvas API, canvg y client-zip. Privacidad total."
           />
@@ -182,9 +172,9 @@ function Step({ n, title, children }) {
   );
 }
 
-function FeatureCard({ title, desc }) {
+function FeatureCard({ title, desc, className = "" }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className={className || "rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"}>
       <h3 className="text-base font-semibold text-slate-900">{title}</h3>
       <p className="mt-1 text-sm text-slate-600">{desc}</p>
     </div>
