@@ -1,0 +1,9 @@
+{
+  "name": "IconForge (Dev)",
+  "short_name": "IconForge",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b0b0b",
+  "icons": []
+}
