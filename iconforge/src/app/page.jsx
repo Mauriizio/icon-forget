@@ -15,7 +15,7 @@ export default function HomePage() {
             <div className="flex flex-col items-center sm:items-start gap-3">
               <img
                 src="/logo-if.svg"
-                alt="IconForge logo"
+                alt="IconForge"
                 className="h-12 w-12 rounded-xl shadow-sm ring-1 ring-slate-200"
                 loading="eager"
               />
