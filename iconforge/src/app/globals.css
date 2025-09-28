@@ -2,113 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
-/* =========================
-   Tema base (sin libs extra)
-   ========================= */
-:root {
-  --if-bg:        246 247 249;   /* #f6f7f9  */
-  --if-ink:       15 23 42;      /* slate-900 */
-  --if-ink-soft:  71 85 105;     /* slate-600 */
-  --if-primary:   99 102 241;    /* indigo-500 */
-  --if-accent:   167 139 250;    /* violet-400 */
-  --if-ring:     203 213 225;    /* slate-300 */
-  --if-card:     255 255 255;    /* white */
-}
+:root { color-scheme: light; }
+html, body { height: 100%; }
+body { @apply bg-stone-50 text-slate-900; }
 
-/* Tipografía/antialias general */
-html { color-scheme: light; }
-html, body { overflow-x: hidden; } /* evita scroll lateral */
-* { min-width: 0; }                /* guardrail en flex/grid */
+.btn { @apply inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm shadow-sm bg-white hover:bg-slate-50; }
+.card { @apply rounded-2xl border bg-white shadow-sm; }
 
-body {
-  @apply text-slate-800;
+
+
+
+
+body{
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+h1,h2,h3,.font-display{ font-family: var(--font-display); }
 
-  /* Fondo con patrón MUY sutil (radial + grid) */
-  background:
-    radial-gradient(1200px 600px at 20% -10%, rgba(var(--if-primary) / 0.08), transparent 60%),
-    radial-gradient(1400px 700px at 110% 10%, rgba(var(--if-accent) / 0.10), transparent 60%),
-    linear-gradient(transparent 0, transparent 100%);
-  background-color: rgb(var(--if-bg));
+/* === BACKDROP SUAVE (ADD) === */
+.bg-app{
+  background:#fbfbff;
+  background-image:
+    radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.18), transparent 60%),
+    radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.12), transparent 60%);
 }
-
-/* Selección de texto con la marca */
-::selection {
-  background-color: rgba(var(--if-primary) / 0.25);
-  color: rgb(var(--if-ink));
-}
-
-/* Contenedor máximo para coherencia de ancho */
-.container-if {
-  max-width: 1120px;
-  margin-inline: auto;
-  padding-inline: 1rem;
-}
-
-/* Hero título: tracking y weight agradable */
-.h1-gradient {
-  background-image: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #6366f1 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Tarjetas y botones “default” */
-.card {
-  @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
-}
-.btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-2xl font-semibold shadow-sm focus:outline-none focus-visible:ring focus-visible:ring-indigo-500/30;
-}
-.btn-primary {
-  @apply btn bg-indigo-600 text-white hover:bg-indigo-700 px-6 py-3;
-}
-.btn-ghost {
-  @apply btn border border-slate-200 bg-white hover:bg-slate-50 px-5 py-3 text-sm font-medium text-slate-700;
-}
-
-/* Chips / badges */
-.badge {
-  @apply inline-flex items-center rounded-full bg-white px-3 py-1 text-xs ring-1 ring-slate-200;
-}
-
-/* Panel ilustración del logo grande (glow suave) */
-.hero-figure {
-  --g1: rgba(99,102,241,0.15);
-  --g2: rgba(167,139,250,0.18);
-  background:
-    radial-gradient(600px 300px at 70% 10%, var(--g2), transparent 60%),
-    radial-gradient(500px 260px at 20% 90%, var(--g1), transparent 60%),
-    white;
-  @apply rounded-3xl border border-slate-200 shadow-lg;
-}
-
-/* === IconForge keyframes (server-friendly) === */
-@keyframes ifGlow {
-  0% {
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08),
-      0 2px 0 rgba(99, 102, 241, 0.06) inset;
-    transform: translateZ(0) scale(1);
-  }
-  50% {
-    box-shadow: 0 18px 42px rgba(167, 139, 250, 0.14),
-      0 2px 0 rgba(167, 139, 250, 0.08) inset;
-    transform: translateZ(0) scale(1.01);
-  }
-  100% {
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08),
-      0 2px 0 rgba(99, 102, 241, 0.06) inset;
-    transform: translateZ(0) scale(1);
+@media (prefers-color-scheme: dark){
+  .bg-app{
+    background-color:#0b0b12;
+    background-image:
+      radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.15), transparent 60%),
+      radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.10), transparent 60%);
   }
 }
-@keyframes floatY {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-  100% { transform: translateY(0); }
+
+/* === CARD GLASSY (opcional) (ADD) === */
+.card{
+  background:rgba(255,255,255,.7);
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
 }
 
-/* Tipografía display (aplicada en títulos con className="font-display") */
-.font-display {
-  font-family: "Space Grotesk", Plus Jakarta Sans, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+
+/* === FONTS (ADD) === */
+:root{
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  --font-display: "Sora", var(--font-sans);
+}
+body{
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1,h2,h3,.font-display{ font-family: var(--font-display); }
+
+/* Fondo suave reutilizable (opcional) */
+.bg-app{
+  background:#fbfbff;
+  background-image:
+    radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.18), transparent 60%),
+    radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.12), transparent 60%);
+}
+@media (prefers-color-scheme: dark){
+  .bg-app{
+    background-color:#0b0b12;
+    background-image:
+      radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.15), transparent 60%),
+      radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.10), transparent 60%);
+  }
+}
+
+/* Tarjeta “glassy” (opcional) */
+.card{
+  background:rgba(255,255,255,.7);
+  -webkit-backdrop-filter:blur(6px);
+  backdrop-filter:blur(6px);
 }
