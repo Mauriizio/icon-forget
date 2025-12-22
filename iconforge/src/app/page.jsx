@@ -1,5 +1,6 @@
 // /app/page.jsx
 import Link from "next/link";
+import HeroPreview from "./components/HeroPreview";
 
 export default function HomePage() {
   return (
@@ -70,9 +71,10 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Columna derecha reservada por si luego agregas una preview/imagen.
-              Si no la usas, no pasa nada; el grid colapsa perfecto en móvil. */}
-          <div className="hidden lg:block" />
+          {/* Columna derecha: mockup/slider */}
+          <div className="hidden lg:block">
+            <HeroPreview />
+          </div>
         </div>
 
         {/* === CTA flotante móvil === */}

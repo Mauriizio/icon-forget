@@ -101,6 +101,27 @@ export default function StudioPage() {
     const b = await blobFromCanvas(t.canvas, "image/png");
     downloadBlob(b, `${normalizeFileName(t.label)}.png`);
   };
+const previewShots = useMemo(() => {
+    if (!img) return null;
+
+    const desired = ["icon-512-maskable", "icon-512", "apple-180", "favicon-32"];
+    const thumbs = desired
+      .map((label) => tiles.find((t) => t.label === label))
+      .filter(Boolean)
+      .map((t) => ({
+        label: normalizeFileName(t.label),
+        size: t.size,
+        dataUrl: t.canvas.toDataURL("image/png"),
+      }));
+
+    const ogBg = bg === "transparent" ? "#ffffff" : bg;
+    const ogCanvas = drawOG({ img, w: 1200, h: 630, bg: ogBg, title: ogTitle, subtitle: ogSubtitle });
+
+    return {
+      thumbs,
+      ogUrl: ogCanvas.toDataURL("image/png"),
+    };
+  }, [tiles, bg, ogTitle, ogSubtitle, img]);
 
   const downloadICO = async () => {
     if (!img) return;
@@ -373,6 +394,43 @@ export default function StudioPage() {
             {zipRunning ? "Procesando…" : "Descargar ZIP (todo)"}
           </button>
           {zipError ? <p role="alert" className="mt-1 text-xs text-red-600">ZIP: {zipError.message}</p> : null}
+
+          {previewShots && (
+            <div className="mt-4 space-y-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-3">
+              <h4 className="text-xs font-semibold text-slate-700">Previews rápidos</h4>
+              <div className="grid grid-cols-2 gap-3">
+                {previewShots.thumbs.map((thumb) => (
+                  <figure key={thumb.label} className="flex flex-col items-center gap-2 rounded-xl bg-white p-2 shadow-sm">
+                    <div className="rounded-lg border bg-[conic-gradient(at_top_left,_#f8fafc,_#e2e8f0)] p-3">
+                      <img
+                        src={thumb.dataUrl}
+                        loading="lazy"
+                        alt={`Preview ${thumb.label}`}
+                        className="h-16 w-16 object-contain"
+                        width={thumb.size}
+                        height={thumb.size}
+                      />
+                    </div>
+                    <figcaption className="text-[10px] font-medium text-slate-600">{thumb.label}</figcaption>
+                  </figure>
+                ))}
+              </div>
+
+              {previewShots.ogUrl && (
+                <div>
+                  <p className="mb-1 text-[11px] font-semibold text-slate-700">Open Graph 1200×630</p>
+                  <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+                    <img
+                      src={previewShots.ogUrl}
+                      alt="Preview OG generada"
+                      loading="lazy"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {!img && <p className="text-xs text-slate-500">Sube un logo para habilitar.</p>}
         </div>
