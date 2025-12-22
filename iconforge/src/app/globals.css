@@ -1,81 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
-html, body { height: 100%; }
-body { @apply bg-stone-50 text-slate-900; }
-
-.btn { @apply inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm shadow-sm bg-white hover:bg-slate-50; }
-.card { @apply rounded-2xl border bg-white shadow-sm; }
-
-
-
-
-
-body{
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-h1,h2,h3,.font-display{ font-family: var(--font-display); }
-
-/* === BACKDROP SUAVE (ADD) === */
-.bg-app{
-  background:#fbfbff;
-  background-image:
-    radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.18), transparent 60%),
-    radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.12), transparent 60%);
-}
-@media (prefers-color-scheme: dark){
-  .bg-app{
-    background-color:#0b0b12;
-    background-image:
-      radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.15), transparent 60%),
-      radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.10), transparent 60%);
-  }
-}
-
-/* === CARD GLASSY (opcional) (ADD) === */
-.card{
-  background:rgba(255,255,255,.7);
-  -webkit-backdrop-filter:blur(6px);
-  backdrop-filter:blur(6px);
-}
-
-
-/* === FONTS (ADD) === */
-:root{
-  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+:root {
+  color-scheme: light;
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
   --font-display: "Sora", var(--font-sans);
 }
-body{
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply text-slate-900;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-h1,h2,h3,.font-display{ font-family: var(--font-display); }
-
-/* Fondo suave reutilizable (opcional) */
-.bg-app{
-  background:#fbfbff;
-  background-image:
-    radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.18), transparent 60%),
-    radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.12), transparent 60%);
-}
-@media (prefers-color-scheme: dark){
-  .bg-app{
-    background-color:#0b0b12;
-    background-image:
-      radial-gradient(60rem 30rem at 10% -10%, rgba(141,124,255,.15), transparent 60%),
-      radial-gradient(50rem 30rem at 90% 10%, rgba(109,84,255,.10), transparent 60%);
-  }
+background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.14), transparent 32%),
+    radial-gradient(circle at 80% 0%, rgba(14, 165, 233, 0.12), transparent 30%),
+    radial-gradient(circle at 50% 80%, rgba(236, 72, 153, 0.08), transparent 36%), #0b1021;
 }
 
-/* Tarjeta “glassy” (opcional) */
-.card{
-  background:rgba(255,255,255,.7);
-  -webkit-backdrop-filter:blur(6px);
-  backdrop-filter:blur(6px);
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+.btn {
+  @apply inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm shadow-sm bg-white/90 hover:bg-white;
+
+}
+.card {
+  @apply rounded-3xl border border-white/10 bg-white/10 shadow-xl;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.bg-app {
+  background: radial-gradient(80rem 60rem at -10% -20%, rgba(167, 139, 250, 0.25), transparent 60%),
+    radial-gradient(70rem 70rem at 110% 10%, rgba(45, 212, 191, 0.22), transparent 55%),
+    radial-gradient(70rem 50rem at 30% 130%, rgba(59, 130, 246, 0.18), transparent 55%),
+    linear-gradient(135deg, #0b1021 0%, #0b1228 35%, #0b0f1c 100%);
 }

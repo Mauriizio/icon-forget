@@ -2,7 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { drawToCanvas, blobFromCanvas, downloadBlob, drawOG } from "@/lib/canvas-utils";
+import {
+  drawToCanvas,
+  blobFromCanvas,
+  downloadBlob,
+  drawOG,
+} from "@/lib/canvas-utils";
 import { rasterizeSvgToImage } from "@/lib/svg-to-canvas";
 import { pngsToIco } from "@/lib/ico-client";
 import { zipAndDownload } from "@/lib/zip-utils";
@@ -15,8 +20,8 @@ const SIZES = [
   { label: "icon-256", size: 256, padding: 0.06 },
   { label: "icon-384", size: 384, padding: 0.06 },
   { label: "apple-180", size: 180, padding: 0.06 },
-  { label: "favicon-32", size: 32,  padding: 0.08 },
-  { label: "favicon-16", size: 16,  padding: 0.08 },
+  { label: "favicon-32", size: 32, padding: 0.08 },
+  { label: "favicon-16", size: 16, padding: 0.08 },
 ];
 
 function Spinner({ className = "" }) {
@@ -39,7 +44,9 @@ export default function StudioPage() {
 
   // OG state
   const [ogTitle, setOgTitle] = useState("IconForge");
-  const [ogSubtitle, setOgSubtitle] = useState("Assets completos para tu web — 100% local");
+  const [ogSubtitle, setOgSubtitle] = useState(
+    "Assets completos para tu web — 100% local",
+  );
 
   // manifest state
   const [mfName, setMfName] = useState("Mi App");
@@ -57,7 +64,11 @@ export default function StudioPage() {
       setFile(null);
       setImg(null);
       setUiError(res.error);
-      console.warn("[upload] invalid file:", { name: f?.name, size: f?.size, type: f?.type });
+      console.warn("[upload] invalid file:", {
+        name: f?.name,
+        size: f?.size,
+        type: f?.type,
+      });
       return;
     }
 
@@ -85,7 +96,9 @@ export default function StudioPage() {
   const tiles = useMemo(() => {
     if (!img) return [];
     const list = SIZES.map(({ label, size, padding }) => ({
-      label, size, canvas: drawToCanvas({ img, size, padding, bg }),
+      label,
+      size,
+      canvas: drawToCanvas({ img, size, padding, bg }),
     }));
     if (maskable) {
       list.unshift({
@@ -101,10 +114,16 @@ export default function StudioPage() {
     const b = await blobFromCanvas(t.canvas, "image/png");
     downloadBlob(b, `${normalizeFileName(t.label)}.png`);
   };
-const previewShots = useMemo(() => {
+
+  const previewShots = useMemo(() => {
     if (!img) return null;
 
-    const desired = ["icon-512-maskable", "icon-512", "apple-180", "favicon-32"];
+    const desired = [
+      "icon-512-maskable",
+      "icon-512",
+      "apple-180",
+      "favicon-32",
+    ];
     const thumbs = desired
       .map((label) => tiles.find((t) => t.label === label))
       .filter(Boolean)
@@ -115,7 +134,14 @@ const previewShots = useMemo(() => {
       }));
 
     const ogBg = bg === "transparent" ? "#ffffff" : bg;
-    const ogCanvas = drawOG({ img, w: 1200, h: 630, bg: ogBg, title: ogTitle, subtitle: ogSubtitle });
+    const ogCanvas = drawOG({
+      img,
+      w: 1200,
+      h: 630,
+      bg: ogBg,
+      title: ogTitle,
+      subtitle: ogSubtitle,
+    });
 
     return {
       thumbs,
@@ -125,8 +151,8 @@ const previewShots = useMemo(() => {
 
   const downloadICO = async () => {
     if (!img) return;
-    const f16 = tiles.find(t => t.label === "favicon-16");
-    const f32 = tiles.find(t => t.label === "favicon-32");
+    const f16 = tiles.find((t) => t.label === "favicon-16");
+    const f32 = tiles.find((t) => t.label === "favicon-32");
     if (!f16 || !f32) return;
 
     const [b16, b32] = await Promise.all([
@@ -144,7 +170,14 @@ const previewShots = useMemo(() => {
   const downloadOG = async () => {
     if (!img) return;
     const ogBg = bg === "transparent" ? "#ffffff" : bg;
-    const c = drawOG({ img, w: 1200, h: 630, bg: ogBg, title: ogTitle, subtitle: ogSubtitle });
+    const c = drawOG({
+      img,
+      w: 1200,
+      h: 630,
+      bg: ogBg,
+      title: ogTitle,
+      subtitle: ogSubtitle,
+    });
     const b = await blobFromCanvas(c, "image/png", 0.92);
     downloadBlob(b, "og-1200x630.png");
   };
@@ -159,27 +192,43 @@ const previewShots = useMemo(() => {
         const b = await blobFromCanvas(t.canvas, "image/png");
         const name = labelToZipPath(t.label);
         return { name, input: b, lastModified: Date.now() };
-      })
+      }),
     );
     files.push(...pngEntries);
 
     // ICO (si está disponible)
-    const f16 = tiles.find(t => t.label === "favicon-16");
-    const f32 = tiles.find(t => t.label === "favicon-32");
+    const f16 = tiles.find((t) => t.label === "favicon-16");
+    const f32 = tiles.find((t) => t.label === "favicon-32");
     if (f16 && f32) {
       const [b16, b32] = await Promise.all([
         blobFromCanvas(f16.canvas, "image/png"),
         blobFromCanvas(f32.canvas, "image/png"),
       ]);
       const ico = await pngsToIco([b16, b32]);
-      if (ico) files.push({ name: "favicon.ico", input: ico, lastModified: Date.now() });
+      if (ico)
+        files.push({
+          name: "favicon.ico",
+          input: ico,
+          lastModified: Date.now(),
+        });
     }
 
     // OG
     const ogBg = bg === "transparent" ? "#ffffff" : bg;
-    const ogC = drawOG({ img, w: 1200, h: 630, bg: ogBg, title: ogTitle, subtitle: ogSubtitle });
+    const ogC = drawOG({
+      img,
+      w: 1200,
+      h: 630,
+      bg: ogBg,
+      title: ogTitle,
+      subtitle: ogSubtitle,
+    });
     const ogB = await blobFromCanvas(ogC, "image/png", 0.92);
-    files.push({ name: "og/og-1200x630.png", input: ogB, lastModified: Date.now() });
+    files.push({
+      name: "og/og-1200x630.png",
+      input: ogB,
+      lastModified: Date.now(),
+    });
 
     // Manifest
     const manifest = buildManifest({
@@ -189,12 +238,21 @@ const previewShots = useMemo(() => {
       backgroundColor: mfBg,
       includeMaskable: !!maskable,
     });
-    const mfBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: "application/manifest+json" });
-    files.push({ name: "site.webmanifest", input: mfBlob, lastModified: Date.now() });
+    const mfBlob = new Blob([JSON.stringify(manifest, null, 2)], {
+      type: "application/manifest+json",
+    });
+    files.push({
+      name: "site.webmanifest",
+      input: mfBlob,
+      lastModified: Date.now(),
+    });
 
     // README.txt
     const readme = buildReadme();
-    files.push({ name: "README.txt", input: new Blob([readme], { type: "text/plain" }) });
+    files.push({
+      name: "README.txt",
+      input: new Blob([readme], { type: "text/plain" }),
+    });
 
     await zipAndDownload(files, "iconforge-assets.zip");
   };
@@ -206,43 +264,69 @@ const previewShots = useMemo(() => {
   };
 
   // Tareas envueltas
-  const { run: runOG,   running: ogRunning,  error: ogError }   = useAsyncTask(downloadOG);
-  const { run: runICO,  running: icoRunning, error: icoError }  = useAsyncTask(downloadICO);
-  const { run: runZIP,  running: zipRunning, error: zipError }  = useAsyncTask(downloadZIPPreset);
+  const {
+    run: runOG,
+    running: ogRunning,
+    error: ogError,
+  } = useAsyncTask(downloadOG);
+  const {
+    run: runICO,
+    running: icoRunning,
+    error: icoError,
+  } = useAsyncTask(downloadICO);
+  const {
+    run: runZIP,
+    running: zipRunning,
+    error: zipError,
+  } = useAsyncTask(downloadZIPPreset);
 
   const sizeLimitMB = (MAX_BYTES / (1024 * 1024)).toFixed(0);
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8">
+    <main className="max-w-6xl mx-auto px-4 py-8 text-white">
       {/* NAV sticky con regreso al Home */}
-      <nav className="sticky top-0 z-40 -mx-4 mb-6 border-b bg-white/70 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-4 h-12 flex items-center justify-between">
-          <Link href="/" className="text-sm text-slate-700 hover:text-indigo-600">← Inicio</Link>
-          <img src="/logo-if.svg" alt="IconForge" className="h-6 w-6" />
+      <nav className="sticky top-0 z-40 -mx-4 mb-6 border-b border-white/10 bg-white/10 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-4 h-12 flex items-center justify-between text-white/80">
+          <Link href="/" className="text-sm hover:text-cyan-200">
+            ← Inicio
+          </Link>
+          <img
+            src="/logo-if.svg"
+            alt="IconForge"
+            className="h-6 w-6 drop-shadow"
+          />
         </div>
       </nav>
 
       {/* === HEADER STUDIO (ADD) === */}
-      <header className="flex flex-col items-center text-center gap-4 mb-8">
-        <img src="/logo-if.svg" alt="IconForge" width="72" height="72" />
-        <h1 className="font-display text-3xl">IconForge Studio</h1>
-        <p className="max-w-2xl text-slate-600">
-          Sube tu logo y descarga todos los assets listos (PNG, ICO, OG, manifest y ZIP).
-        </p>
+      <header className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 px-6 py-8 text-center shadow-2xl">
+        <div
+          className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(103,232,249,0.18),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(236,72,153,0.14),transparent_40%)]"
+          aria-hidden
+        />
+        <div className="relative flex flex-col items-center gap-4">
+          <img
+            src="/logo-if.svg"
+            alt="IconForge"
+            width="72"
+            height="72"
+            className="drop-shadow"
+          />
+          <h1 className="font-display text-3xl md:text-4xl">
+            <span className="bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-200 bg-clip-text text-transparent">
+              IconForge Studio
+            </span>
+          </h1>
+          <p className="max-w-2xl text-slate-100/80">
+            Sube tu logo y descarga todos los assets listos (PNG, ICO, OG,
+            manifest y ZIP).
+          </p>
+        </div>
       </header>
 
-      <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-        <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent">
-          IconForge Studio
-        </span>
-      </h1>
-      <p className="text-slate-600">
-        Sube tu logo y descarga todos los assets listos (PNG, ICO, OG, manifest y ZIP).
-      </p>
-
       {/* INPUT más visible/CTA */}
-      <section className="rounded-2xl border bg-white shadow-sm p-4 mt-6">
-        <label className="block text-sm font-medium mb-2">
+      <section className="rounded-2xl border border-white/10 bg-white/5 shadow-xl p-4 mt-6">
+        <label className="block text-sm font-medium mb-2 text-slate-100/90">
           1) Logo (SVG/PNG/JPG) — máx. {sizeLimitMB} MB
         </label>
 
@@ -259,43 +343,52 @@ const previewShots = useMemo(() => {
             className="flex items-center justify-between gap-3 w-full rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-4 hover:bg-slate-100 cursor-pointer transition"
           >
             <div className="text-left">
-              <p className="text-sm font-medium text-slate-800">Seleccionar archivo</p>
-              <p className="text-xs text-slate-500">Arrastra y suelta o haz click para elegir</p>
+              <p className="text-sm font-semibold text-white">
+                Seleccionar archivo
+              </p>
+              <p className="text-xs text-slate-100/70">
+                Arrastra y suelta o haz click para elegir
+              </p>
             </div>
-            <span className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">
+            <span className="inline-flex items-center rounded-lg bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-lg shadow-cyan-500/30">
               Elegir
             </span>
           </label>
         </div>
 
         {uiError ? (
-          <p role="alert" className="mt-2 text-xs text-red-600">{uiError}</p>
+          <p role="alert" className="mt-2 text-xs text-red-200">
+            {uiError}
+          </p>
         ) : null}
         {file && (
-          <p className="mt-2 text-xs text-slate-600">
-            Cargado: <strong>{file.name}</strong>{busy ? " (procesando…)" : ""}
+          <p className="mt-2 text-xs text-slate-100/80">
+            Cargado: <strong>{file.name}</strong>
+            {busy ? " (procesando…)" : ""}
           </p>
         )}
       </section>
 
       <section className="grid md:grid-cols-4 gap-4 mt-6">
-        <div className="rounded-2xl border bg-white shadow-sm p-4 space-y-4">
+        <div className="rounded-2xl border border-white/10 bg-white/5 shadow-xl p-4 space-y-4">
           {/* PRESET principal */}
           <button
             onClick={runZIP}
             disabled={!img || zipRunning}
             aria-busy={zipRunning ? "true" : "false"}
             title="Genera y descarga: icons PNG (16–512), apple-touch-180, OG 1200×630, site.webmanifest y favicon.ico (si el vendor está disponible)."
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 w-full shadow-sm"
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 hover:brightness-110 disabled:opacity-60 w-full shadow-lg shadow-cyan-500/30"
           >
             {zipRunning ? <Spinner className="border-white" /> : null}
             {zipRunning ? "Procesando…" : "PWA completo (ZIP)"}
           </button>
           {zipDoneAt && !zipRunning && !zipError ? (
-            <p role="status" className="text-xs text-emerald-600">ZIP listo. Revisa tu carpeta de descargas.</p>
+            <p role="status" className="text-xs text-emerald-200">
+              ZIP listo. Revisa tu carpeta de descargas.
+            </p>
           ) : null}
 
-          <h3 className="text-sm font-semibold text-slate-800">Opciones</h3>
+          <h3 className="text-sm font-semibold text-white">Opciones</h3>
 
           <div className="flex items-center justify-between gap-3">
             <label className="text-sm">Fondo</label>
@@ -303,15 +396,19 @@ const previewShots = useMemo(() => {
               <button
                 type="button"
                 onClick={() => setBg("transparent")}
-                className={`px-2.5 py-1 rounded border text-xs ${bg==="transparent"?"bg-slate-900 text-white":"bg-white"}`}
+                className={`px-2.5 py-1 rounded border text-xs ${
+                  bg === "transparent"
+                    ? "bg-slate-900 text-white"
+                    : "bg-white text-slate-800"
+                }`}
               >
                 Transparente
               </button>
               <input
                 type="color"
-                value={bg==="transparent" ? "#ffffff" : bg}
-                onChange={(e)=>setBg(e.target.value)}
-                className="h-8 w-10 border rounded"
+                value={bg === "transparent" ? "#ffffff" : bg}
+                onChange={(e) => setBg(e.target.value)}
+                className="h-8 w-10 border border-white/30 rounded bg-white/70"
                 title="Color de fondo"
               />
             </div>
@@ -319,20 +416,24 @@ const previewShots = useMemo(() => {
 
           <div className="flex items-center justify-between gap-3">
             <label className="text-sm">Maskable 512</label>
-            <input type="checkbox" checked={maskable} onChange={(e)=>setMaskable(e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={maskable}
+              onChange={(e) => setMaskable(e.target.checked)}
+            />
           </div>
 
-          <h3 className="text-sm font-semibold text-slate-800 pt-2">Open Graph</h3>
+          <h3 className="text-sm font-semibold text-white pt-2">Open Graph</h3>
           <input
             value={ogTitle}
-            onChange={e=>setOgTitle(e.target.value)}
-            className="w-full border rounded px-3 py-1.5 text-sm"
+            onChange={(e) => setOgTitle(e.target.value)}
+            className="w-full border border-white/20 bg-white/5 rounded px-3 py-1.5 text-sm text-white placeholder:text-slate-200/60"
             placeholder="Título"
           />
           <input
             value={ogSubtitle}
-            onChange={e=>setOgSubtitle(e.target.value)}
-            className="w-full border rounded px-3 py-1.5 text-sm mt-2"
+            onChange={(e) => setOgSubtitle(e.target.value)}
+            className="w-full border border-white/20 bg-white/5 rounded px-3 py-1.5 text-sm mt-2 text-white placeholder:text-slate-200/60"
             placeholder="Subtítulo"
           />
 
@@ -341,16 +442,22 @@ const previewShots = useMemo(() => {
             onClick={runOG}
             disabled={!img || ogRunning}
             aria-busy={ogRunning ? "true" : "false"}
-            className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-white hover:bg-slate-50 disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-md border border-white/20 px-3 py-2 text-sm bg-white/10 hover:bg-white/20 disabled:opacity-50"
           >
             {ogRunning ? <Spinner /> : null}
             {ogRunning ? "Procesando…" : "Descargar OG (1200×630)"}
           </button>
-          {ogError ? <p role="alert" className="mt-1 text-xs text-red-600">OG: {ogError.message}</p> : null}
+          {ogError ? (
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              OG: {ogError.message}
+            </p>
+          ) : null}
 
           {/* MINI PREVIEW OG responsiva SIN overflow */}
           <div className="mt-3">
-            <label className="block text-xs text-slate-600 mb-1">Vista previa OG</label>
+            <label className="block text-xs text-slate-100/70 mb-1">
+              Vista previa OG
+            </label>
             <OGMiniPreview
               img={img}
               bg={bg}
@@ -359,17 +466,41 @@ const previewShots = useMemo(() => {
             />
           </div>
 
-          <h3 className="text-sm font-semibold text-slate-800 pt-4">Manifest</h3>
-          <input value={mfName} onChange={e=>setMfName(e.target.value)} className="w-full border rounded px-3 py-1.5 text-sm" placeholder="name"/>
-          <input value={mfShort} onChange={e=>setMfShort(e.target.value)} className="w-full border rounded px-3 py-1.5 text-sm mt-2" placeholder="short_name"/>
+          <h3 className="text-sm font-semibold text-white pt-4">Manifest</h3>
+          <input
+            value={mfName}
+            onChange={(e) => setMfName(e.target.value)}
+            className="w-full border border-white/20 bg-white/5 rounded px-3 py-1.5 text-sm text-white placeholder:text-slate-200/60"
+            placeholder="name"
+          />
+          <input
+            value={mfShort}
+            onChange={(e) => setMfShort(e.target.value)}
+            className="w-full border border-white/20 bg-white/5 rounded px-3 py-1.5 text-sm mt-2 text-white placeholder:text-slate-200/60"
+            placeholder="short_name"
+          />
           <div className="grid grid-cols-2 gap-3 mt-2">
             <div>
-              <label className="block text-xs text-slate-600">theme_color</label>
-              <input type="color" value={mfTheme} onChange={e=>setMfTheme(e.target.value)} className="h-8 w-full border rounded"/>
+              <label className="block text-xs text-slate-100/70">
+                theme_color
+              </label>
+              <input
+                type="color"
+                value={mfTheme}
+                onChange={(e) => setMfTheme(e.target.value)}
+                className="h-8 w-full border border-white/30 rounded bg-white/70"
+              />
             </div>
             <div>
-              <label className="block text-xs text-slate-600">background_color</label>
-              <input type="color" value={mfBg} onChange={e=>setMfBg(e.target.value)} className="h-8 w-full border rounded"/>
+              <label className="block text-xs text-slate-100/70">
+                background_color
+              </label>
+              <input
+                type="color"
+                value={mfBg}
+                onChange={(e) => setMfBg(e.target.value)}
+                className="h-8 w-full border border-white/30 rounded bg-white/70"
+              />
             </div>
           </div>
 
@@ -382,7 +513,11 @@ const previewShots = useMemo(() => {
             {icoRunning ? <Spinner /> : null}
             {icoRunning ? "Procesando…" : "Descargar favicon.ico"}
           </button>
-          {icoError ? <p role="alert" className="mt-1 text-xs text-red-600">ICO: {icoError.message}</p> : null}
+          {icoError ? (
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              ICO: {icoError.message}
+            </p>
+          ) : null}
 
           <button
             onClick={runZIP}
@@ -393,15 +528,24 @@ const previewShots = useMemo(() => {
             {zipRunning ? <Spinner /> : null}
             {zipRunning ? "Procesando…" : "Descargar ZIP (todo)"}
           </button>
-          {zipError ? <p role="alert" className="mt-1 text-xs text-red-600">ZIP: {zipError.message}</p> : null}
+          {zipError ? (
+            <p role="alert" className="mt-1 text-xs text-red-600">
+              ZIP: {zipError.message}
+            </p>
+          ) : null}
 
           {previewShots && (
-            <div className="mt-4 space-y-3 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-3">
-              <h4 className="text-xs font-semibold text-slate-700">Previews rápidos</h4>
+            <div className="mt-4 space-y-3 rounded-2xl border border-white/15 bg-white/5 p-3 shadow-inner">
+              <h4 className="text-xs font-semibold text-white">
+                Previews rápidos
+              </h4>
               <div className="grid grid-cols-2 gap-3">
                 {previewShots.thumbs.map((thumb) => (
-                  <figure key={thumb.label} className="flex flex-col items-center gap-2 rounded-xl bg-white p-2 shadow-sm">
-                    <div className="rounded-lg border bg-[conic-gradient(at_top_left,_#f8fafc,_#e2e8f0)] p-3">
+                  <figure
+                    key={thumb.label}
+                    className="flex flex-col items-center gap-2 rounded-xl bg-white/10 p-2 shadow-sm ring-1 ring-white/10"
+                  >
+                    <div className="rounded-lg border border-white/20 bg-[conic-gradient(at_top_left,_#cbd5ff,_#ecfeff)] p-3">
                       <img
                         src={thumb.dataUrl}
                         loading="lazy"
@@ -411,15 +555,19 @@ const previewShots = useMemo(() => {
                         height={thumb.size}
                       />
                     </div>
-                    <figcaption className="text-[10px] font-medium text-slate-600">{thumb.label}</figcaption>
+                    <figcaption className="text-[10px] font-medium text-slate-100/80">
+                      {thumb.label}
+                    </figcaption>
                   </figure>
                 ))}
               </div>
 
               {previewShots.ogUrl && (
                 <div>
-                  <p className="mb-1 text-[11px] font-semibold text-slate-700">Open Graph 1200×630</p>
-                  <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+                  <p className="mb-1 text-[11px] font-semibold text-white">
+                    Open Graph 1200×630
+                  </p>
+                  <div className="overflow-hidden rounded-xl border border-white/20 bg-white/10 shadow-sm">
                     <img
                       src={previewShots.ogUrl}
                       alt="Preview OG generada"
@@ -432,24 +580,39 @@ const previewShots = useMemo(() => {
             </div>
           )}
 
-          {!img && <p className="text-xs text-slate-500">Sube un logo para habilitar.</p>}
+          {!img && (
+            <p className="text-xs text-slate-100/70">
+              Sube un logo para habilitar.
+            </p>
+          )}
         </div>
 
-        <div className="md:col-span-3 rounded-2xl border bg-white shadow-sm p-4">
-          <h3 className="text-sm font-medium mb-3">Previsualización y descarga</h3>
-          {!img && <div className="text-center text-slate-500 py-10">Sube tu logo para ver previsualizaciones</div>}
+        <div className="md:col-span-3 rounded-2xl border border-white/10 bg-white/5 shadow-xl p-4">
+          <h3 className="text-sm font-medium mb-3 text-white">
+            Previsualización y descarga
+          </h3>
+          {!img && (
+            <div className="text-center text-slate-100/70 py-10">
+              Sube tu logo para ver previsualizaciones
+            </div>
+          )}
           {img && (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {tiles.map((t) => (
                 <div key={t.label} className="flex flex-col items-center gap-2">
-                  <div className="border rounded-xl p-3 bg-[conic-gradient(at_top_left,_#f8fafc,_#e2e8f0)]">
-                    <CanvasPreview canvas={t.canvas} viewSize={Math.min(128, t.size)} />
+                  <div className="border border-white/20 rounded-xl p-3 bg-[conic-gradient(at_top_left,_#cbd5ff,_#ecfeff)] shadow-lg">
+                    <CanvasPreview
+                      canvas={t.canvas}
+                      viewSize={Math.min(128, t.size)}
+                    />
                   </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-slate-600">{normalizeFileName(t.label)}</span>
+                    <span className="text-slate-100/80">
+                      {normalizeFileName(t.label)}
+                    </span>
                     <button
                       onClick={() => downloadPNG(t)}
-                      className="inline-flex items-center gap-1 px-2 py-1 rounded border bg-white hover:bg-slate-50"
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded border border-white/20 bg-white/10 hover:bg-white/20"
                     >
                       PNG
                     </button>
@@ -467,14 +630,22 @@ const previewShots = useMemo(() => {
 function CanvasPreview({ canvas, viewSize = 128 }) {
   const ref = useRef(null);
   useEffect(() => {
-    const dst = ref.current; if (!dst) return;
+    const dst = ref.current;
+    if (!dst) return;
     const ctx = dst.getContext("2d");
-    dst.width = viewSize; dst.height = viewSize;
+    dst.width = viewSize;
+    dst.height = viewSize;
     ctx.imageSmoothingQuality = "high";
-    ctx.clearRect(0,0,viewSize,viewSize);
+    ctx.clearRect(0, 0, viewSize, viewSize);
     ctx.drawImage(canvas, 0, 0, viewSize, viewSize);
   }, [canvas, viewSize]);
-  return <canvas ref={ref} className="block" style={{ width: viewSize, height: viewSize }} />;
+  return (
+    <canvas
+      ref={ref}
+      className="block"
+      style={{ width: viewSize, height: viewSize }}
+    />
+  );
 }
 
 /** Mini preview OG responsiva con checkerboard y SIN overflow */
@@ -490,7 +661,7 @@ function OGMiniPreview({ img, bg, title, subtitle }) {
     if (!dst || !wrap || !img) return;
 
     const render = () => {
-      const cssWidth = wrap.clientWidth;               // ancho disponible en la columna
+      const cssWidth = wrap.clientWidth; // ancho disponible en la columna
       const cssHeight = Math.round(cssWidth / ASPECT); // mantener 1200×630
       const dpr = Math.min(window.devicePixelRatio || 1, 2); // limitar para no gastar GPU
 
@@ -525,7 +696,11 @@ function OGMiniPreview({ img, bg, title, subtitle }) {
     <div className="relative rounded-xl border bg-white p-2 overflow-hidden">
       <div
         ref={wrapRef}
-        className={`rounded-lg ${isTransparent ? "bg-[length:16px_16px] bg-[linear-gradient(45deg,rgba(148,163,184,0.18) 25%,transparent 25%),linear-gradient(-45deg,rgba(148,163,184,0.18) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(148,163,184,0.18) 75%),linear-gradient(-45deg,transparent 75%,rgba(148,163,184,0.18) 75%)] bg-[position:0_0,0_8px,8px_-8px,-8px_0]" : "bg-white"}`}
+        className={`rounded-lg ${
+          isTransparent
+            ? "bg-[length:16px_16px] bg-[linear-gradient(45deg,rgba(148,163,184,0.18) 25%,transparent 25%),linear-gradient(-45deg,rgba(148,163,184,0.18) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(148,163,184,0.18) 75%),linear-gradient(-45deg,transparent 75%,rgba(148,163,184,0.18) 75%)] bg-[position:0_0,0_8px,8px_-8px,-8px_0]"
+            : "bg-white"
+        }`}
       >
         <canvas
           ref={ref}
@@ -551,23 +726,48 @@ function labelToZipPath(label) {
   if (label.startsWith("favicon-")) return `icons/${label}.png`;
   return `icons/${label}.png`;
 }
-function fileToDataURL(file){
-  return new Promise((resolve,reject)=>{ const r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=reject; r.readAsDataURL(file); });
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
 }
-function dataUrlToImage(dataUrl){
-  return new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve(img); img.onerror=reject; img.src=dataUrl; });
+function dataUrlToImage(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
 }
 
-function buildManifest({ name, shortName, themeColor, backgroundColor, includeMaskable }) {
+function buildManifest({
+  name,
+  shortName,
+  themeColor,
+  backgroundColor,
+  includeMaskable,
+}) {
   const icons = [
     { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
     { src: "/icons/icon-384.png", sizes: "384x384", type: "image/png" },
     { src: "/icons/icon-256.png", sizes: "256x256", type: "image/png" },
     { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-    { src: "/icons/apple-touch-icon-180.png", sizes: "180x180", type: "image/png" },
+    {
+      src: "/icons/apple-touch-icon-180.png",
+      sizes: "180x180",
+      type: "image/png",
+    },
   ];
   if (includeMaskable) {
-    icons.unshift({ src: "/icons/icon-512-maskable.png", sizes: "512x512", type: "image/png", purpose: "any maskable" });
+    icons.unshift({
+      src: "/icons/icon-512-maskable.png",
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "any maskable",
+    });
   }
   return {
     name,

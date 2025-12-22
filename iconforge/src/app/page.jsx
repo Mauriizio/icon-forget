@@ -4,12 +4,15 @@ import HeroPreview from "./components/HeroPreview";
 
 export default function HomePage() {
   return (
-    <main className="min-h-dvh bg-slate-50">
+    <main className="min-h-dvh bg-app text-white">
       {/* HERO */}
-     <section className="mx-auto max-w-5xl lg:max-w-6xl px-4 pt-16 pb-10">
+      <section className="relative mx-auto max-w-6xl px-4 pt-16 pb-14">
+        <div className="absolute inset-0 -z-10 overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent shadow-2xl" />
+        <div className="absolute -left-10 top-10 h-32 w-32 rounded-full bg-cyan-400/30 blur-3xl" aria-hidden />
+        <div className="absolute bottom-4 right-4 h-44 w-44 rounded-full bg-fuchsia-500/20 blur-3xl" aria-hidden />
 
         {/* Contenedor responsivo: columna única en móvil, 2 columnas en desktop si luego añades una preview */}
-        <div className="grid gap-8 lg:grid-cols-2 items-center">
+        <div className="grid gap-10 lg:grid-cols-2 items-center">
           {/* Columna de texto */}
           <div>
             {/* Orden correcto en móvil: icono → título → (badge) → subtítulo */}
@@ -17,30 +20,33 @@ export default function HomePage() {
               <img
                 src="/logo-if.svg"
                 alt="IconForge"
-                className="h-12 w-12 rounded-xl shadow-sm ring-1 ring-slate-200"
+                className="h-12 w-12 rounded-xl shadow-lg ring-2 ring-white/40"
                 loading="eager"
               />
 
-              <h1 className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-center sm:text-left">
-  <span className="bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-clip-text text-transparent">
-                  IconForge
-                </span>
-              </h1>
+              <div className="flex flex-col gap-3 text-center sm:text-left">
+                <p className="inline-flex items-center self-center sm:self-start rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100 ring-1 ring-white/20">
+                  Studio local · sin backend
+                </p>
+                <h1 className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight drop-shadow-[0_10px_40px_rgba(56,189,248,0.2)]">
+                  <span className="bg-gradient-to-r from-cyan-300 via-indigo-200 to-fuchsia-200 bg-clip-text text-transparent">
+                    IconForge
+                  </span>
+                </h1>
+              </div>
 
               {/* Badge: visible en sm+; en móvil puedes activarla quitando 'hidden' */}
-             <span className="inline-flex justify-center text-center rounded-full px-3 py-1 text-sm bg-violet-100 text-violet-700 max-w-[260px]">
-  100% local · Sin backend · Next.js 15 + Tailwind 3
-</span>
-
+              <span className="inline-flex justify-center text-center rounded-full px-3 py-1 text-sm bg-white/10 text-cyan-50 ring-1 ring-white/10 max-w-[260px]">
+                100% local · Next.js 15 · Tailwind 3
+              </span>
             </div>
 
-           <p className="mt-4 text-lg text-slate-700 text-center sm:text-left sm:max-w-xl">
-
+            <p className="mt-4 text-lg text-slate-100/90 text-center sm:text-left sm:max-w-xl">
               Genera todos tus assets desde un solo logo: PWA (maskable), Apple Touch, favicons PNG/ICO y Open Graph 1200×630.
               Todo se procesa en tu navegador. Sin subidas, sin esperas.
             </p>
 
-            <ul className="mt-4 grid gap-2 text-slate-700 text-left max-sm:max-w-[28rem] max-sm:mx-auto">
+            <ul className="mt-4 grid gap-2 text-slate-100/80 text-left max-sm:max-w-[28rem] max-sm:mx-auto">
               <li>• Exportes nítidos desde 16×16 hasta 512×512</li>
               <li>• Soporta <strong>SVG</strong>, <strong>PNG</strong> y <strong>JPG</strong> (≤ 5 MB)</li>
               <li>• OG automático con tipografía clara y fondo legible</li>
@@ -49,7 +55,7 @@ export default function HomePage() {
             <div className="mt-6 flex flex-wrap items-center gap-3 justify-center sm:justify-start">
               <Link
                 href="/studio"
-                className="inline-flex items-center rounded-2xl bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus-visible:ring focus-visible:ring-indigo-500/40"
+                className="inline-flex items-center rounded-2xl bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-cyan-500/20 transition hover:scale-[1.01] focus:outline-none focus-visible:ring focus-visible:ring-cyan-400/40"
               >
                 🚀 Abrir el Studio
               </Link>
@@ -57,13 +63,13 @@ export default function HomePage() {
                 href="https://developer.mozilla.org/en-US/docs/Web/Manifest"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                className="inline-flex items-center rounded-2xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-medium text-white hover:bg-white/20"
               >
                 ¿Qué es un manifest?
               </a>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-slate-500 justify-center sm:justify-start">
+            <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-slate-100/70 justify-center sm:justify-start">
               <Badge>100% Local</Badge>
               <Badge>Sin backend</Badge>
               <Badge>Next.js 15 + React 19</Badge>
@@ -82,7 +88,7 @@ export default function HomePage() {
           <div className="mx-auto w-[calc(100%-2rem)]">
             <Link
               href="/studio"
-              className="block text-center rounded-xl px-5 py-3 bg-indigo-600 text-white font-semibold shadow-lg"
+              className="block text-center rounded-xl px-5 py-3 bg-gradient-to-r from-cyan-400 via-indigo-500 to-fuchsia-500 text-white font-semibold shadow-lg"
             >
               🚀 Abrir el Studio
             </Link>
@@ -92,7 +98,7 @@ export default function HomePage() {
 
       {/* CÓMO FUNCIONA */}
       <section className="mx-auto max-w-6xl px-4 pb-6">
-        <h2 className="text-xl font-semibold text-slate-900">¿Cómo funciona?</h2>
+        <h2 className="text-xl font-semibold text-white">¿Cómo funciona?</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <Step n="1" title="Sube tu logo">
             Aceptamos <strong>SVG</strong>, <strong>PNG</strong> y <strong>JPG</strong> (≤ 5 MB). Si es SVG lo rasterizamos con alta calidad.
@@ -107,33 +113,26 @@ export default function HomePage() {
       </section>
 
       {/* QUÉ OBTIENES */}
-      <section className="mx-auto max-w-6xl px-4 pb-12">
-        <h2 className="text-xl font-semibold text-slate-900">Qué obtienes</h2>
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <h2 className="text-xl font-semibold text-white">Qué obtienes</h2>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <FeatureCard
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl transition hover:-translate-y-1 hover:shadow-cyan-500/30"
             title="Assets de marca coherentes"
             desc="Con márgenes seguros y maskable listo para PWA. Exportes nítidos desde 16×16 hasta 512×512."
           />
           <FeatureCard
-
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl transition hover:-translate-y-1 hover:shadow-cyan-500/30"
             title="OG 1200×630 con tipografía clara"
             desc="Capa de fondo automática si tu logo es transparente. Títulos y subtítulos personalizables."
           />
           <FeatureCard
-
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl transition hover:-translate-y-1 hover:shadow-cyan-500/30"
             title="Manifest válido"
             desc="Generamos site.webmanifest con purpose 'any maskable' y colores configurables."
           />
           <FeatureCard
-
-          className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:-translate-y-0.5"
-
+            className="rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl transition hover:-translate-y-1 hover:shadow-cyan-500/30"
             title="Sin dependencia del servidor"
             desc="Todo sucede en tu navegador con Canvas API, canvg y client-zip. Privacidad total."
           />
@@ -141,10 +140,10 @@ export default function HomePage() {
       </section>
 
       {/* FOOTER SIMPLE */}
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-600 flex flex-wrap gap-3 items-center justify-between">
+      <footer className="border-t border-white/10 bg-white/5">
+        <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-100 flex flex-wrap gap-3 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/logo-if.svg" alt="IconForge" className="h-6 w-6 rounded-lg ring-1 ring-slate-200" />
+            <img src="/logo-if.svg" alt="IconForge" className="h-6 w-6 rounded-lg ring-1 ring-white/30" />
             <span>IconForge · Generador de assets</span>
           </div>
           <div className="flex items-center gap-4">
@@ -153,7 +152,7 @@ export default function HomePage() {
               href="https://maurizio.dev"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-700 hover:text-indigo-600"
+              className="text-white hover:text-cyan-200"
             >
               Hecho por <strong>maurizio.dev</strong>
             </a>
@@ -166,7 +165,7 @@ export default function HomePage() {
 
 function Badge({ children }) {
   return (
-    <span className="inline-flex items-center rounded-full bg-white px-3 py-1 ring-1 ring-slate-200">
+    <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 ring-1 ring-white/10 text-white">
       {children}
     </span>
   );
@@ -174,21 +173,21 @@ function Badge({ children }) {
 
 function Step({ n, title, children }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="mb-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white">
+    <div className="rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl">
+      <div className="mb-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-cyan-400 text-xs font-semibold text-white">
         {n}
       </div>
-      <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-      <p className="mt-1 text-sm text-slate-600">{children}</p>
+      <h3 className="text-base font-semibold text-white">{title}</h3>
+      <p className="mt-1 text-sm text-slate-100/80">{children}</p>
     </div>
   );
 }
 
-function FeatureCard({ title, desc }) {
+function FeatureCard({ title, desc, className = "" }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h3 className="text-base font-semibold text-slate-900">{title}</h3>
-      <p className="mt-1 text-sm text-slate-600">{desc}</p>
+    <div className={`rounded-2xl border border-white/10 bg-white/10 p-5 shadow-2xl ${className}`}>
+      <h3 className="text-base font-semibold text-white">{title}</h3>
+      <p className="mt-1 text-sm text-slate-100/80">{desc}</p>
     </div>
   );
 }
