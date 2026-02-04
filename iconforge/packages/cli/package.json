@@ -1,0 +1,27 @@
+{
+  "name": "iconfull",
+  "version": "0.1.0",
+  "description": "Generate app icon assets from a single image.",
+  "license": "MIT",
+  "bin": {
+    "iconfull": "src/cli.js"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "test": "node ./scripts/smoke-test.js"
+  },
+  "dependencies": {
+    "commander": "^13.1.0",
+    "iconfull-core": "file:../core"
+  },
+  "bundledDependencies": [
+    "iconfull-core"
+  ]
+}
