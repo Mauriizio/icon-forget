@@ -519,21 +519,6 @@ export default function StudioPage() {
             </p>
           ) : null}
 
-          <button
-            onClick={runZIP}
-            disabled={!img || zipRunning}
-            aria-busy={zipRunning ? "true" : "false"}
-            className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm bg-white text-slate-900 hover:bg-slate-50 disabled:opacity-50 w-full"
-          >
-            {zipRunning ? <Spinner /> : null}
-            {zipRunning ? "Procesando…" : "Descargar ZIP (todo)"}
-          </button>
-          {zipError ? (
-            <p role="alert" className="mt-1 text-xs text-red-600">
-              ZIP: {zipError.message}
-            </p>
-          ) : null}
-
           {previewShots && (
             <div className="mt-4 space-y-3 rounded-2xl border border-white/15 bg-white/5 p-3 shadow-inner">
               <h4 className="text-xs font-semibold text-white">
@@ -579,6 +564,23 @@ export default function StudioPage() {
               )}
             </div>
           )}
+
+          <div className="pt-2">
+            <button
+              onClick={runZIP}
+              disabled={!img || zipRunning}
+              aria-busy={zipRunning ? "true" : "false"}
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-base font-semibold text-white bg-gradient-to-r from-fuchsia-500 via-indigo-500 to-cyan-400 hover:brightness-110 disabled:opacity-60 w-full shadow-lg shadow-fuchsia-500/30"
+            >
+              {zipRunning ? <Spinner className="border-white" /> : null}
+              {zipRunning ? "Procesando…" : "Descargar todo en un ZIP"}
+            </button>
+            {zipError ? (
+              <p role="alert" className="mt-2 text-xs text-red-200">
+                ZIP: {zipError.message}
+              </p>
+            ) : null}
+          </div>
 
           {!img && (
             <p className="text-xs text-slate-100/70">
