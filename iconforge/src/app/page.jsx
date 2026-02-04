@@ -37,7 +37,7 @@ export default function HomePage() {
 
               {/* Badge: visible en sm+; en móvil puedes activarla quitando 'hidden' */}
               <span className="inline-flex justify-center text-center rounded-full px-3 py-1 text-sm bg-white/10 text-cyan-50 ring-1 ring-white/10 max-w-[260px]">
-                100% local · Next.js 15 · Tailwind 3
+                100% local · Next.js 16.1 · React 19
               </span>
             </div>
 
@@ -72,8 +72,9 @@ export default function HomePage() {
             <div className="mt-8 flex flex-wrap items-center gap-4 text-xs text-slate-100/70 justify-center sm:justify-start">
               <Badge>100% Local</Badge>
               <Badge>Sin backend</Badge>
-              <Badge>Next.js 15 + React 19</Badge>
-              <Badge>Tailwind 3</Badge>
+              <Badge>Next.js 16.1</Badge>
+              <Badge>React 19</Badge>
+              <Badge>Tailwind CSS 3</Badge>
             </div>
           </div>
 
@@ -140,19 +141,25 @@ export default function HomePage() {
       </section>
 
       {/* FOOTER SIMPLE */}
-      <footer className="border-t border-white/10 bg-white/5">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-100 flex flex-wrap gap-3 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src="/logo-if.svg" alt="IconForge" className="h-6 w-6 rounded-lg ring-1 ring-white/30" />
-            <span>IconForge · Generador de assets</span>
+      <footer className="border-t border-white/10 bg-gradient-to-r from-white/5 via-white/10 to-white/5">
+        <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-slate-100 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/logo-if.svg" alt="IconForge" className="h-8 w-8 rounded-lg ring-1 ring-white/30" />
+            <div>
+              <p className="font-semibold text-white">IconForge</p>
+              <p className="text-slate-100/70">Generador local de assets para PWA, marcas y Open Graph.</p>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <span>Next.js 15 · React 19 · Tailwind 3</span>
+          <div className="flex flex-wrap items-center gap-4 text-slate-100/70">
+            <span>Next.js 16.1 · React 19 · Tailwind CSS 3</span>
+            <Link href="/privacy" className="text-white/90 hover:text-cyan-200">
+              Privacidad
+            </Link>
             <a
               href="https://maurizio.dev"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white hover:text-cyan-200"
+              className="text-white/90 hover:text-cyan-200"
             >
               Hecho por <strong>maurizio.dev</strong>
             </a>
