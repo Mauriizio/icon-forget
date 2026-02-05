@@ -3,7 +3,11 @@
 const path = require("path");
 const fs = require("fs/promises");
 const { program } = require("commander");
+<<<<<<< ours
 const { generateAssets } = require("./index");
+=======
+const { generateAssets } = require("./core");
+>>>>>>> theirs
 
 function logStep(message) {
   console.log(`\n${message}`);

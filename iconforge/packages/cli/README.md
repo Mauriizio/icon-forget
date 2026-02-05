@@ -8,12 +8,21 @@ Generate all required app icon assets from a single image.
 npm install -g iconfull
 ```
 
+<<<<<<< ours
 Or run via npx:
+=======
+Or run with npx:
+>>>>>>> theirs
 
 ```bash
 npx iconfull --input ./logo.png --out ./dist --zip
 ```
 
+<<<<<<< ours
+=======
+> `iconfull` is self-contained; no extra core package install is required.
+
+>>>>>>> theirs
 ## Usage
 
 ```bash
