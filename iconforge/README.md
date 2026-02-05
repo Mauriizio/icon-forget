@@ -29,3 +29,5 @@ iconfull --input ./logo.png --out ./dist --zip
 ```
 
 For full CLI documentation, see `packages/cli/README.md`.
+
+visit maurizio.dev
