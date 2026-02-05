@@ -196,6 +196,15 @@ export default function StudioPage() {
     );
     files.push(...pngEntries);
 
+    const icon192 = pngEntries.find((entry) => entry.name === "icon-192.png");
+    const icon512 = pngEntries.find((entry) => entry.name === "icon-512.png");
+    if (icon192) {
+      files.push({ name: "android-chrome-192x192.png", input: icon192.input, lastModified: Date.now() });
+    }
+    if (icon512) {
+      files.push({ name: "android-chrome-512x512.png", input: icon512.input, lastModified: Date.now() });
+    }
+
     // ICO (si está disponible)
     const f16 = tiles.find((t) => t.label === "favicon-16");
     const f32 = tiles.find((t) => t.label === "favicon-32");
@@ -225,7 +234,7 @@ export default function StudioPage() {
     });
     const ogB = await blobFromCanvas(ogC, "image/png", 0.92);
     files.push({
-      name: "og/og-1200x630.png",
+      name: "og-1200x630.png",
       input: ogB,
       lastModified: Date.now(),
     });
@@ -242,7 +251,7 @@ export default function StudioPage() {
       type: "application/manifest+json",
     });
     files.push({
-      name: "site.webmanifest",
+      name: "manifest.webmanifest",
       input: mfBlob,
       lastModified: Date.now(),
     });
@@ -720,13 +729,15 @@ function OGMiniPreview({ img, bg, title, subtitle }) {
 }
 
 function normalizeFileName(label) {
-  if (label === "apple-180") return "apple-touch-icon-180";
+  if (label === "apple-180") return "apple-touch-icon";
   return label;
 }
 function labelToZipPath(label) {
-  if (label === "apple-180") return "icons/apple-touch-icon-180.png";
-  if (label.startsWith("favicon-")) return `icons/${label}.png`;
-  return `icons/${label}.png`;
+  if (label === "apple-180") return "apple-touch-icon.png";
+  if (label === "favicon-16") return "favicon-16x16.png";
+  if (label === "favicon-32") return "favicon-32x32.png";
+  if (label.startsWith("favicon-")) return `${label}.png`;
+  return `${label}.png`;
 }
 function fileToDataURL(file) {
   return new Promise((resolve, reject) => {
@@ -753,19 +764,21 @@ function buildManifest({
   includeMaskable,
 }) {
   const icons = [
-    { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
-    { src: "/icons/icon-384.png", sizes: "384x384", type: "image/png" },
-    { src: "/icons/icon-256.png", sizes: "256x256", type: "image/png" },
-    { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    { src: "./android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+    { src: "./android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    { src: "./icon-512.png", sizes: "512x512", type: "image/png" },
+    { src: "./icon-384.png", sizes: "384x384", type: "image/png" },
+    { src: "./icon-256.png", sizes: "256x256", type: "image/png" },
+    { src: "./icon-192.png", sizes: "192x192", type: "image/png" },
     {
-      src: "/icons/apple-touch-icon-180.png",
+      src: "./apple-touch-icon.png",
       sizes: "180x180",
       type: "image/png",
     },
   ];
   if (includeMaskable) {
     icons.unshift({
-      src: "/icons/icon-512-maskable.png",
+      src: "./icon-512-maskable.png",
       sizes: "512x512",
       type: "image/png",
       purpose: "any maskable",
@@ -788,21 +801,20 @@ function buildReadme() {
 =====================
 
 Contenido:
-- /icons/*     → PWA icons, apple-touch, favicons PNG
-- /og/*        → Open Graph 1200×630
+- /*           → PWA icons, apple-touch, favicons PNG y OG 1200×630
 - favicon.ico  → Multi-tamaño (16/32) (si presente)
-- site.webmanifest
+- manifest.webmanifest
 
 Instrucciones rápidas (HTML):
   <link rel="icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png">
-  <link rel="apple-touch-icon" href="/icons/apple-touch-icon-180.png">
-  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <meta name="theme-color" content="#000000">
 
 Next.js (coloca los archivos en /public):
-  - Copia las carpetas /icons, /og, y los archivos favicon.ico y site.webmanifest dentro de /public.
+  - Copia los archivos generados (incluyendo manifest.webmanifest y og-1200x630.png) dentro de /public.
   - En app/layout.tsx o _document, añade los <link> de arriba.
 
 Nota: si elegiste fondo "transparente", la OG usa blanco para un mejor preview en redes.

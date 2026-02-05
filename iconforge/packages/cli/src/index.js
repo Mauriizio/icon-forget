@@ -6,11 +6,13 @@ const pngToIco = require("png-to-ico");
 const archiver = require("archiver");
 
 const ICON_SPECS = [
-  { name: "favicon-16x16.png", size: 16 },
-  { name: "favicon-32x32.png", size: 32 },
-  { name: "apple-touch-icon.png", size: 180 },
-  { name: "android-chrome-192x192.png", size: 192 },
-  { name: "android-chrome-512x512.png", size: 512 }
+  { names: ["favicon-16x16.png"], size: 16 },
+  { names: ["favicon-32x32.png"], size: 32 },
+  { names: ["apple-touch-icon.png"], size: 180 },
+  { names: ["icon-192.png", "android-chrome-192x192.png"], size: 192 },
+  { names: ["icon-256.png"], size: 256 },
+  { names: ["icon-384.png"], size: 384 },
+  { names: ["icon-512.png", "android-chrome-512x512.png"], size: 512 }
 ];
 
 const OG_SPEC = { name: "og-1200x630.png", width: 1200, height: 630 };
@@ -126,9 +128,15 @@ async function generateAssets({ inputPath, outputDir, zip }) {
   const files = [];
 
   for (const spec of ICON_SPECS) {
-    const outputPath = path.join(outputDir, spec.name);
-    await renderIcon(inputPath, outputPath, spec.size);
-    files.push(outputPath);
+    const firstOutputPath = path.join(outputDir, spec.names[0]);
+    await renderIcon(inputPath, firstOutputPath, spec.size);
+    files.push(firstOutputPath);
+
+    for (const aliasName of spec.names.slice(1)) {
+      const aliasPath = path.join(outputDir, aliasName);
+      await fs.copyFile(firstOutputPath, aliasPath);
+      files.push(aliasPath);
+    }
   }
 
   const ogPath = path.join(outputDir, OG_SPEC.name);

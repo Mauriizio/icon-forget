@@ -140,6 +140,39 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CLI */}
+<section className="mx-auto max-w-6xl px-4 pb-14">
+  <div className="rounded-2xl border border-white/10 bg-white/10 p-6 shadow-2xl">
+    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
+      Para desarrolladores y flujos CI/CD
+    </p>
+    <h2 className="mt-2 text-2xl font-semibold text-white">
+      Usa IconFull desde la Terminal
+    </h2>
+    <p className="mt-3 text-sm text-slate-100/80">
+      Instala IconFull globalmente o ejecútalo con npx para generar todo tu set de iconos
+      directamente desde la terminal.
+    </p>
+
+    <div className="mt-5 grid gap-3 md:grid-cols-2">
+      <pre className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950/70 p-4 text-sm text-cyan-100">
+        <code>npm install -g iconfull</code>
+      </pre>
+      <pre className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950/70 p-4 text-sm text-cyan-100">
+        <code>npx iconfull --input ./logo.png --out ./dist --zip</code>
+      </pre>
+    </div>
+
+    <ul className="mt-5 grid gap-2 text-sm text-slate-100/80">
+      <li>• Perfecto para pipelines CI/CD</li>
+      <li>• Automatiza la generación de favicons y assets PWA</li>
+      <li>• Intégralo en scripts de build</li>
+      <li>• Mismo resultado que el estudio web</li>
+    </ul>
+  </div>
+</section>
+
+
       {/* FOOTER SIMPLE */}
       <footer className="border-t border-white/10 bg-gradient-to-r from-white/5 via-white/10 to-white/5">
         <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-slate-100 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
