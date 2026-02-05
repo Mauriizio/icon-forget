@@ -6,8 +6,7 @@ ICONFULL is a monorepo that ships a Next.js demo app and the `iconfull` CLI for 
 
 ```
 apps/web        # Next.js demo application
-packages/core   # Image processing + manifest generation logic
-packages/cli    # iconfull CLI (npm package)
+packages/cli    # iconfull CLI (npm package, includes processing logic)
 ```
 
 ## Requirements

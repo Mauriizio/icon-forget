@@ -7,11 +7,7 @@
     "packages/*"
   ],
   "engines": {
-<<<<<<< ours
-    "node": ">=18"
-=======
     "node": ">=18 <23"
->>>>>>> theirs
   },
   "scripts": {
     "dev:web": "npm run dev --workspace apps/web",

@@ -1,10 +1,6 @@
 {
   "name": "iconfull",
-<<<<<<< ours
   "version": "0.1.2",
-=======
-  "version": "0.1.0",
->>>>>>> theirs
   "description": "Generate app icon assets from a single image.",
   "license": "MIT",
   "bin": {
@@ -24,11 +20,7 @@
   "dependencies": {
     "archiver": "^7.0.1",
     "commander": "^13.1.0",
-<<<<<<< ours
-    "png-to-ico": "^2.1.0",
-=======
     "png-to-ico": "^2.1.8",
->>>>>>> theirs
     "sharp": "^0.34.4"
   }
 }
