@@ -1,6 +1,6 @@
 {
   "name": "iconfull",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate app icon assets from a single image.",
   "license": "MIT",
   "bin": {
@@ -19,9 +19,8 @@
   },
   "dependencies": {
     "commander": "^13.1.0",
-    "iconfull-core": "file:../core"
-  },
-  "bundledDependencies": [
-    "iconfull-core"
-  ]
+    "archiver": "^7.0.1",
+    "png-to-ico": "^2.1.0",
+    "sharp": "^0.34.4"
+  }
 }
