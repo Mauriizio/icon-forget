@@ -3,7 +3,7 @@
 const path = require("path");
 const fs = require("fs/promises");
 const { program } = require("commander");
-const { generateAssets } = require("iconfull-core");
+const { generateAssets } = require("./index");
 
 function logStep(message) {
   console.log(`\n${message}`);

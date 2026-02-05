@@ -1,6 +1,6 @@
 {
   "name": "iconfull",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Generate app icon assets from a single image.",
   "license": "MIT",
   "bin": {
@@ -18,8 +18,8 @@
     "test": "node ./scripts/smoke-test.js"
   },
   "dependencies": {
-    "commander": "^13.1.0",
     "archiver": "^7.0.1",
+    "commander": "^13.1.0",
     "png-to-ico": "^2.1.0",
     "sharp": "^0.34.4"
   }
